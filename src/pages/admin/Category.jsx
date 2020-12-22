@@ -1,60 +1,30 @@
-import React, { useContext, useEffect } from "react";
-import { production } from "../../app.config.json";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import { AppContext } from "../../context/AppProvider";
+import Box from "@material-ui/core/Box";
+import CategoryTypeList from "../../components/category/CategoryTypeList";
 
 const useStyles = makeStyles(() => ({
   root: {
     paddingTop: "5.5rem",
     paddingLeft: "2rem",
+    paddingRight: "2rem",
   },
 }));
 
 const Category = () => {
-  const [, setLoading] = useContext(AppContext);
-
-  useEffect(() => {
-    (async () => {
-      const query = `
-        query CategoryTypes($page: Int!, $perPage: Int!) {
-          categoryTypes(page: $page, perPage: $perPage) {
-              categoryTypes {
-                  _id
-                  name
-                  imageUrl
-                  include
-              }
-          }
-        }
-      `;
-
-      setLoading(true);
-      const response = await fetch(production.gql_api, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("ohmyfood_token")}`,
-        },
-        body: JSON.stringify({
-          query,
-          variables: {
-            page: 0,
-            perPage: 0,
-          },
-        }),
-      }).then((res) => res.json());
-      setLoading(false);
-      console.log(response);
-    })();
-  }, [setLoading]);
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <Box className={classes.root}>
       <h3>Category</h3>
-      <Grid container></Grid>
-    </div>
+      <Grid container>
+        <Grid item lg={2}>
+          <CategoryTypeList />
+        </Grid>
+        <Grid item lg={10}></Grid>
+      </Grid>
+    </Box>
   );
 };
 
