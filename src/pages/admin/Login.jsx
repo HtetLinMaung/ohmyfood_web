@@ -113,7 +113,7 @@ const Login = () => {
           const error = new Error("Unauthorized!");
           throw error;
         }
-        localStorage.setItem("ohmyfood_token", response.token);
+        localStorage.setItem("ohmyfood_token", response.data.login.token);
         history.push("/admin");
       }
     } catch (err) {

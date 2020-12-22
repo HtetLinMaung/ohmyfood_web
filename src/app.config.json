@@ -1,9 +1,9 @@
 {
-  "production": {
+  "productionD": {
     "host": "https://oh-my-food.herokuapp.com",
     "gql_api": "https://oh-my-food.herokuapp.com/graphql"
   },
-  "development": {
+  "production": {
     "host": "http://localhost:5000",
     "gql_api": "http://localhost:5000/graphql"
   }
