@@ -6,12 +6,18 @@ import { CategoryContext } from "../../context/CategoryProvider";
 
 const useStyles = makeStyles(() => ({
   root: {
-    borderRadius: 15,
-    padding: "1.15rem 1rem",
+    borderRadius: 10,
+    padding: "0.5rem 1rem",
     marginBottom: 4,
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  label: {
+    marginRight: 0,
+  },
+  text: {
+    fontSize: 13,
   },
 }));
 
@@ -30,10 +36,27 @@ const CategoryTypeItem = ({ categoryType }) => {
     });
   };
 
+  const handleClick = () => {
+    dispatch({
+      type: "CATEGORY_TYPES",
+      payload: state.categoryTypes.map((type) => {
+        if (type._id === categoryType._id) {
+          return { ...type, selected: true };
+        }
+        return { ...type, selected: false };
+      }),
+    });
+  };
+
   return (
-    <Card className={classes.root}>
-      <div>{categoryType.name}</div>
+    <Card
+      className={classes.root}
+      raised={categoryType.selected}
+      onClick={handleClick}
+    >
+      <div className={classes.text}>{categoryType.name}</div>
       <FormControlLabel
+        classes={{ root: classes.label }}
         control={
           <IOSSwitch
             checked={categoryType.include}

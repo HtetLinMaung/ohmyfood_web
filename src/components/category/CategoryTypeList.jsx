@@ -5,9 +5,11 @@ import { CategoryContext } from "../../context/CategoryProvider";
 import http from "../../utils/http";
 import { AppContext } from "../../context/AppProvider";
 import CategoryTypeItem from "./CategoryTypeItem";
+import SearchField from "./SearchField";
 
 const useStyles = makeStyles(() => ({
   root: {},
+  wrapper: { marginTop: "1rem" },
 }));
 
 const CategoryTypeList = () => {
@@ -41,16 +43,25 @@ const CategoryTypeList = () => {
       setLoading(false);
       dispatch({
         type: "CATEGORY_TYPES",
-        payload: response.data.categoryTypes.categoryTypes,
+        payload: response.data.categoryTypes.categoryTypes.map((type, i) => ({
+          ...type,
+          selected: i === 0 ? true : false,
+        })),
       });
     })();
   }, [setLoading, dispatch]);
 
   return (
     <Box className={classes.root}>
-      {state.categoryTypes.map((categoryType) => (
-        <CategoryTypeItem categoryType={categoryType} key={categoryType._id} />
-      ))}
+      <SearchField />
+      <Box className={classes.wrapper}>
+        {state.categoryTypes.map((categoryType) => (
+          <CategoryTypeItem
+            categoryType={categoryType}
+            key={categoryType._id}
+          />
+        ))}
+      </Box>
     </Box>
   );
 };
