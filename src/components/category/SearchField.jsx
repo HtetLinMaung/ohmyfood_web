@@ -1,18 +1,15 @@
 import React, { useContext, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Box } from "@material-ui/core";
 import { CategoryContext } from "../../context/CategoryProvider";
 import http from "../../utils/http";
 import { AppContext } from "../../context/AppProvider";
-import CategoryTypeItem from "./CategoryTypeItem";
+import { NotificationsNoneOutlined, Search } from "@material-ui/icons";
 
 const useStyles = makeStyles(() => ({
-  root: {},
-
   input: {
     borderWidth: 0,
-    padding: ".6rem .9rem",
-    borderRadius: 10,
+    padding: ".5rem .9rem",
+    borderRadius: 15,
     width: "100%",
     color: "#545F6D",
     boxSizing: "border-box",
@@ -36,11 +33,7 @@ const useStyles = makeStyles(() => ({
 const SearchField = () => {
   const classes = useStyles();
 
-  return (
-    <div className={classes.root}>
-      <input type="text" className={classes.input} />
-    </div>
-  );
+  return <input type="text" className={classes.input} />;
 };
 
 export default SearchField;
