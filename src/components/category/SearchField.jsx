@@ -25,15 +25,15 @@ const useStyles = makeStyles(() => ({
       },
     },
     "&::placeholder": {
-      color: "#E9E9E9",
+      color: "#545F6D",
     },
   },
 }));
 
-const SearchField = () => {
+const SearchField = (props) => {
   const classes = useStyles();
 
-  return <input type="text" className={classes.input} />;
+  return <input type="text" className={classes.input} {...props} />;
 };
 
 export default SearchField;

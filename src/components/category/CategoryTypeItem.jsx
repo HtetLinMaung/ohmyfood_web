@@ -28,6 +28,7 @@ const useStyles = makeStyles(() => ({
 const CategoryTypeItem = ({ categoryType }) => {
   const classes = useStyles();
   const [state, dispatch] = useContext(CategoryContext);
+
   const handleChange = (event) => {
     dispatch({
       type: "CATEGORY_TYPES",
@@ -42,13 +43,16 @@ const CategoryTypeItem = ({ categoryType }) => {
 
   const handleClick = () => {
     dispatch({
-      type: "CATEGORY_TYPES",
-      payload: state.categoryTypes.map((type) => {
-        if (type._id === categoryType._id) {
-          return { ...type, selected: true };
-        }
-        return { ...type, selected: false };
-      }),
+      type: "SET_STATE",
+      payload: {
+        categoryTypes: state.categoryTypes.map((type) => {
+          if (type._id === categoryType._id) {
+            return { ...type, selected: true };
+          }
+          return { ...type, selected: false };
+        }),
+        categoryType: categoryType,
+      },
     });
   };
 

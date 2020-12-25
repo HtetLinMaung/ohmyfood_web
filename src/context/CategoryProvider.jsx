@@ -8,13 +8,21 @@ const reducer = (state, action) => {
       return { ...state, categoryTypes: action.payload };
     case "CATEGORIES":
       return { ...state, categories: action.payload };
+    case "CATEGORY_TYPE":
+      return { ...state, categoryType: action.payload };
+    case "SET_STATE":
+      return { ...state, ...action.payload };
     default:
       return state;
   }
 };
 
 const CategoryProvider = ({ children }) => {
-  const value = useReducer(reducer, { categoryTypes: [], categories: [] });
+  const value = useReducer(reducer, {
+    categoryTypes: [],
+    categories: [],
+    categoryType: null,
+  });
 
   return (
     <CategoryContext.Provider value={value}>

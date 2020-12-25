@@ -6,7 +6,7 @@ import http from "../../utils/http";
 import { AppContext } from "../../context/AppProvider";
 import CategoryTypeItem from "./CategoryTypeItem";
 import SearchField from "./SearchField";
-import { ArrowBackIosOutlined, Search } from "@material-ui/icons";
+import { Search } from "@material-ui/icons";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
@@ -70,11 +70,18 @@ const CategoryTypeList = () => {
       });
       setLoading(false);
       dispatch({
-        type: "CATEGORY_TYPES",
-        payload: response.data.categoryTypes.categoryTypes.map((type, i) => ({
-          ...type,
-          selected: i === 0 ? true : false,
-        })),
+        type: "SET_STATE",
+        payload: {
+          categoryTypes: response.data.categoryTypes.categoryTypes.map(
+            (type, i) => ({
+              ...type,
+              selected: i === 0 ? true : false,
+            })
+          ),
+          categoryType: response.data.categoryTypes.categoryTypes.length
+            ? response.data.categoryTypes.categoryTypes[0]
+            : null,
+        },
       });
     })();
   }, [setLoading, dispatch]);
@@ -112,10 +119,10 @@ const CategoryTypeList = () => {
         <Grid item>
           <IconButton
             size="small"
-            aria-label="search"
+            aria-label="prev"
             className={classes.iconButton}
           >
-            <ArrowBackIosOutlined className={classes.nextPrevIcon} />
+            <ArrowBackIosIcon className={classes.nextPrevIcon} />
           </IconButton>
         </Grid>
         <Grid item>
@@ -126,7 +133,7 @@ const CategoryTypeList = () => {
         <Grid item>
           <IconButton
             size="small"
-            aria-label="search"
+            aria-label="next"
             className={classes.iconButton}
           >
             <ArrowForwardIosIcon className={classes.nextPrevIcon} />
