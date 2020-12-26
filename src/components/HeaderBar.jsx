@@ -14,11 +14,14 @@ const useStyles = makeStyles(() => ({
   root: {
     backgroundColor: "transparent",
     position: "fixed",
+    zIndex: 99,
   },
   headerContainer: {
     backgroundColor: "#fff",
     borderRadius: 35,
     margin: "1rem 2rem",
+    boxShadow:
+      "0 7px 8px -4px rgba(0,0,0,.2),0 12px 17px 2px rgba(0,0,0,.14),0 5px 22px 4px rgba(0,0,0,.12)!important",
   },
   title: {
     letterSpacing: 2,

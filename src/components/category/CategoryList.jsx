@@ -5,7 +5,13 @@ import { CategoryContext } from "../../context/CategoryProvider";
 import http from "../../utils/http";
 import { AppContext } from "../../context/AppProvider";
 import SearchField from "./SearchField";
-import { EditOutlined, DeleteOutline, Search } from "@material-ui/icons";
+import {
+  EditOutlined,
+  DeleteOutline,
+  Search,
+  SortOutlined,
+  List,
+} from "@material-ui/icons";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 
@@ -107,6 +113,16 @@ const CategoryList = () => {
         </Grid>
       </Grid>
       <Grid container spacing={1} className={classes.tableControl}>
+        <Grid item>
+          <IconButton size="small">
+            <List />
+          </IconButton>
+        </Grid>
+        <Grid item>
+          <IconButton size="small">
+            <SortOutlined />
+          </IconButton>
+        </Grid>
         <Grid item>
           <Button
             variant="outlined"

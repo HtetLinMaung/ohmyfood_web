@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Card, FormControlLabel } from "@material-ui/core";
 import IOSSwitch from "../switch/IOSSwitch";
 import { CategoryContext } from "../../context/CategoryProvider";
+import http from "../../utils/http";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -39,9 +40,28 @@ const CategoryTypeItem = ({ categoryType }) => {
         return type;
       }),
     });
+    const query = `
+      mutation UpdateCategoryType($id: ID!, $name: String!, $imageUrl: String!, $include: Boolean!, $categories: [String!]) {
+        updateCategoryType(id: $id, categoryTypeInput: {name: $name, imageUrl: $imageUrl, include: $include, categories: $categories}) {
+            _id
+            updatedAt
+        }
+      }
+    `;
+    http.post({
+      query,
+      variables: {
+        id: categoryType._id,
+        name: categoryType.name,
+        imageUrl: categoryType.imageUrl,
+        include: event.target.checked,
+        categories: categoryType.categories.map((category) => category._id),
+      },
+    });
   };
 
   const handleClick = () => {
+    if (categoryType.selected) return;
     dispatch({
       type: "SET_STATE",
       payload: {
@@ -67,6 +87,7 @@ const CategoryTypeItem = ({ categoryType }) => {
         classes={{ root: classes.label }}
         control={
           <IOSSwitch
+            onClick={(event) => event.stopPropagation()}
             checked={categoryType.include}
             onChange={handleChange}
             name="include"

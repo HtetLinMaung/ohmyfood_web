@@ -55,6 +55,9 @@ const CategoryTypeList = () => {
                   name
                   imageUrl
                   include
+                  categories {
+                    _id
+                  }
               }
           }
         }
