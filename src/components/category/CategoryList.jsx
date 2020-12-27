@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Card, Grid } from "@material-ui/core";
 import { CategoryContext } from "../../context/CategoryProvider";
@@ -14,6 +14,7 @@ import {
 } from "@material-ui/icons";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
+import GridTable from "../table/GridTable";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -37,6 +38,7 @@ const useStyles = makeStyles(() => ({
   },
   tableControl: {
     marginTop: "2rem",
+    marginBottom: "1rem",
   },
 }));
 
@@ -44,6 +46,32 @@ const CategoryList = () => {
   const classes = useStyles();
   const [, setLoading] = useContext(AppContext);
   const [{ categoryType, categories }, dispatch] = useContext(CategoryContext);
+  const headers = [
+    {
+      key: "name",
+      text: "Category Name",
+    },
+    {
+      key: "price",
+      text: "Price",
+    },
+    {
+      key: "discountPercent",
+      text: "Discount Percent",
+    },
+    {
+      key: "openHour",
+      text: "Open Hour",
+    },
+    {
+      key: "closeHour",
+      text: "Close Hour",
+    },
+    {
+      key: "tags",
+      text: "Tags",
+    },
+  ];
 
   useEffect(() => {
     (async () => {
@@ -146,6 +174,30 @@ const CategoryList = () => {
           </IconButton>
         </Grid>
       </Grid>
+      <GridTable headers={headers} items={categories}>
+        {({ item, index }) => (
+          <Fragment>
+            <Grid item style={{ flex: 1 }}>
+              {item.name}
+            </Grid>
+            <Grid item style={{ flex: 1 }}>
+              {item.price}
+            </Grid>
+            <Grid item style={{ flex: 1 }}>
+              {item.discountPercent}
+            </Grid>
+            <Grid item style={{ flex: 1 }}>
+              {item.openHour}
+            </Grid>
+            <Grid item style={{ flex: 1 }}>
+              {item.closeHour}
+            </Grid>
+            <Grid item style={{ flex: 1 }}>
+              {item.tags.join(", ")}
+            </Grid>
+          </Fragment>
+        )}
+      </GridTable>
     </Card>
   );
 };

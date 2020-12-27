@@ -14,7 +14,7 @@ const useStyles = makeStyles(() => ({
   root: {
     backgroundColor: "transparent",
     position: "fixed",
-    zIndex: 99,
+    zIndex: 98,
   },
   headerContainer: {
     backgroundColor: "#fff",
