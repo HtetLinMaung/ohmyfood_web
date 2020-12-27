@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, Fragment } from "react";
+import React, { useContext, useEffect, Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Card, Grid } from "@material-ui/core";
 import { CategoryContext } from "../../context/CategoryProvider";
@@ -15,6 +15,7 @@ import {
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import GridTable from "../table/GridTable";
+import Pagination from "../table/Pagination";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -46,6 +47,10 @@ const CategoryList = () => {
   const classes = useStyles();
   const [, setLoading] = useContext(AppContext);
   const [{ categoryType, categories }, dispatch] = useContext(CategoryContext);
+  const [perPage, setPerPage] = useState(10);
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(0);
+
   const headers = [
     {
       key: "name",
@@ -70,6 +75,10 @@ const CategoryList = () => {
     {
       key: "tags",
       text: "Tags",
+    },
+    {
+      key: "",
+      text: "",
     },
   ];
 
@@ -101,10 +110,12 @@ const CategoryList = () => {
           },
         });
         setLoading(false);
+        const { categories } = response.data.categoryType;
         dispatch({
           type: "CATEGORIES",
-          payload: response.data.categoryType.categories,
+          payload: categories,
         });
+        setTotalPage(Math.ceil(categories.length / perPage));
       }
     })();
   }, [setLoading, dispatch, categoryType]);
@@ -175,7 +186,7 @@ const CategoryList = () => {
         </Grid>
       </Grid>
       <GridTable headers={headers} items={categories}>
-        {({ item, index }) => (
+        {({ item }) => (
           <Fragment>
             <Grid item style={{ flex: 1 }}>
               {item.name}
@@ -195,9 +206,26 @@ const CategoryList = () => {
             <Grid item style={{ flex: 1 }}>
               {item.tags.join(", ")}
             </Grid>
+            <Grid item container style={{ flex: 1 }} justify="space-around">
+              <Grid item>
+                <IconButton size="small">
+                  <EditOutlined className={classes.icon} />
+                </IconButton>
+              </Grid>
+              <Grid item>
+                <IconButton size="small">
+                  <DeleteOutline className={classes.icon} />
+                </IconButton>
+              </Grid>
+            </Grid>
           </Fragment>
         )}
       </GridTable>
+      <Pagination
+        count={totalPage}
+        page={page}
+        onPageChange={(page) => setPage(page)}
+      />
     </Card>
   );
 };

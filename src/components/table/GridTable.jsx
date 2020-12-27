@@ -40,14 +40,22 @@ const GridTable = ({ headers, items, children }) => {
         <Grid item className={classes.noGrid}>
           #
         </Grid>
-        {headers.map((header) => (
-          <Grid item className={classes.headerGrid}>
+        {headers.map((header, index) => (
+          <Grid
+            item
+            className={classes.headerGrid}
+            key={`grid_table__header__${index}`}
+          >
             {header.text}
           </Grid>
         ))}
       </Grid>
       {items.map((item, index) => (
-        <Card className={classes.gridRow}>
+        <Card
+          raised
+          className={classes.gridRow}
+          key={`grid_table__body__${index}`}
+        >
           <Grid container spacing={1}>
             <Grid item className={classes.noGrid} style={{ fontSize: 12 }}>
               {index + 1}
