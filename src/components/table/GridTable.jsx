@@ -51,11 +51,7 @@ const GridTable = ({ headers, items, children }) => {
         ))}
       </Grid>
       {items.map((item, index) => (
-        <Card
-          raised
-          className={classes.gridRow}
-          key={`grid_table__body__${index}`}
-        >
+        <Card className={classes.gridRow} key={`grid_table__body__${index}`}>
           <Grid container spacing={1}>
             <Grid item className={classes.noGrid} style={{ fontSize: 12 }}>
               {index + 1}

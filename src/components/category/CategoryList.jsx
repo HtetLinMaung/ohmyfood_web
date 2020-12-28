@@ -16,6 +16,8 @@ import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import GridTable from "../table/GridTable";
 import Pagination from "../table/Pagination";
+import Select from "../form/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -38,9 +40,14 @@ const useStyles = makeStyles(() => ({
     fontSize: 12,
   },
   tableControl: {
+    padding: "0 1rem",
     marginTop: "2rem",
     marginBottom: "1rem",
   },
+  paginationWrapper: {
+    padding: "0 1rem",
+  },
+  select: {},
 }));
 
 const CategoryList = () => {
@@ -221,11 +228,23 @@ const CategoryList = () => {
           </Fragment>
         )}
       </GridTable>
-      <Pagination
-        count={totalPage}
-        page={page}
-        onPageChange={(page) => setPage(page)}
-      />
+      <Grid
+        container
+        justify="space-between"
+        className={classes.paginationWrapper}
+      >
+        <Grid item></Grid>
+        <Grid item>
+          <Pagination
+            count={totalPage}
+            page={page}
+            onPageChange={(page) => setPage(page)}
+          />
+        </Grid>
+        <Grid item>
+          <Select value={perPage} onChange={setPerPage} items={[10, 20, 30]} />
+        </Grid>
+      </Grid>
     </Card>
   );
 };
