@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Card, Grid } from "@material-ui/core";
+import { Card, Grid, Box } from "@material-ui/core";
 import { CategoryContext } from "../../context/CategoryProvider";
 import http from "../../utils/http";
 import { AppContext } from "../../context/AppProvider";
@@ -17,7 +17,13 @@ import Button from "@material-ui/core/Button";
 import GridTable from "../table/GridTable";
 import Pagination from "../table/Pagination";
 import Select from "../form/Select";
-import MenuItem from "@material-ui/core/MenuItem";
+
+const buttonStyle = {
+  textTransform: "capitalize",
+  color: "#fff",
+  borderRadius: 4,
+  width: "100%",
+};
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -47,7 +53,36 @@ const useStyles = makeStyles(() => ({
   paginationWrapper: {
     padding: "0 1rem",
   },
-  select: {},
+  addButton: {
+    ...buttonStyle,
+    background: "#3696F8",
+    "&:active": {
+      background: "#3696F8",
+    },
+    "&:hover": {
+      background: "#3696F8",
+    },
+  },
+  exportButton: {
+    ...buttonStyle,
+    background: "green",
+    "&:active": {
+      background: "green",
+    },
+    "&:hover": {
+      background: "green",
+    },
+  },
+  printButton: {
+    ...buttonStyle,
+    background: "#F23F6D",
+    "&:active": {
+      background: "#F23F6D",
+    },
+    "&:hover": {
+      background: "#F23F6D",
+    },
+  },
 }));
 
 const CategoryList = () => {
@@ -132,120 +167,163 @@ const CategoryList = () => {
   }
 
   return (
-    <Card className={classes.root}>
-      <Grid container item lg={12} alignItems="center" spacing={1}>
-        <Grid item>
-          <h4 style={{ margin: 0 }}>{categoryType.name}</h4>
+    <Box>
+      <Card className={classes.root}>
+        <Grid container item lg={12} alignItems="center" spacing={1}>
+          <Grid item>
+            <h4 style={{ margin: 0 }}>{categoryType.name}</h4>
+          </Grid>
+          <Grid item style={{ flex: 1 }}></Grid>
+          <Grid item>
+            <IconButton
+              size="small"
+              aria-label="search"
+              className={classes.iconButton}
+            >
+              <EditOutlined className={classes.icon} />
+            </IconButton>
+          </Grid>
+          <Grid item>
+            <IconButton
+              size="small"
+              aria-label="search"
+              className={classes.iconButton}
+              style={{ background: "red" }}
+            >
+              <DeleteOutline
+                className={classes.icon}
+                style={{ color: "#fff" }}
+              />
+            </IconButton>
+          </Grid>
         </Grid>
-        <Grid item style={{ flex: 1 }}></Grid>
-        <Grid item>
-          <IconButton
-            size="small"
-            aria-label="search"
-            className={classes.iconButton}
-          >
-            <EditOutlined className={classes.icon} />
-          </IconButton>
+        <Grid
+          container
+          spacing={1}
+          justify="flex-end"
+          style={{ marginTop: "1rem" }}
+        >
+          <Grid item>
+            <Button
+              size="small"
+              variant="contained"
+              className={classes.addButton}
+            >
+              Add
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              size="small"
+              variant="contained"
+              className={classes.exportButton}
+            >
+              Export Excel
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              size="small"
+              variant="contained"
+              className={classes.printButton}
+            >
+              Print
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item>
-          <IconButton
-            size="small"
-            aria-label="search"
-            className={classes.iconButton}
-            style={{ background: "red" }}
-          >
-            <DeleteOutline className={classes.icon} style={{ color: "#fff" }} />
-          </IconButton>
+        <Grid container spacing={1} className={classes.tableControl}>
+          <Grid item>
+            <IconButton size="small">
+              <List />
+            </IconButton>
+          </Grid>
+          <Grid item>
+            <IconButton size="small">
+              <SortOutlined />
+            </IconButton>
+          </Grid>
+          <Grid item>
+            <Button
+              variant="outlined"
+              size="small"
+              className={classes.showAllButton}
+            >
+              Show all
+            </Button>
+          </Grid>
+          <Grid item style={{ flex: 1 }}></Grid>
+          <Grid item lg={3}>
+            <SearchField placeholder="Search..." />
+          </Grid>
+          <Grid item>
+            <IconButton
+              size="small"
+              aria-label="search"
+              className={classes.iconButton}
+            >
+              <Search className={classes.icon} />
+            </IconButton>
+          </Grid>
         </Grid>
-      </Grid>
-      <Grid container spacing={1} className={classes.tableControl}>
-        <Grid item>
-          <IconButton size="small">
-            <List />
-          </IconButton>
-        </Grid>
-        <Grid item>
-          <IconButton size="small">
-            <SortOutlined />
-          </IconButton>
-        </Grid>
-        <Grid item>
-          <Button
-            variant="outlined"
-            size="small"
-            className={classes.showAllButton}
-          >
-            Show all
-          </Button>
-        </Grid>
-        <Grid item style={{ flex: 1 }}></Grid>
-        <Grid item lg={3}>
-          <SearchField placeholder="Search..." />
-        </Grid>
-        <Grid item>
-          <IconButton
-            size="small"
-            aria-label="search"
-            className={classes.iconButton}
-          >
-            <Search className={classes.icon} />
-          </IconButton>
-        </Grid>
-      </Grid>
-      <GridTable headers={headers} items={categories}>
-        {({ item }) => (
-          <Fragment>
-            <Grid item style={{ flex: 1 }}>
-              {item.name}
-            </Grid>
-            <Grid item style={{ flex: 1 }}>
-              {item.price}
-            </Grid>
-            <Grid item style={{ flex: 1 }}>
-              {item.discountPercent}
-            </Grid>
-            <Grid item style={{ flex: 1 }}>
-              {item.openHour}
-            </Grid>
-            <Grid item style={{ flex: 1 }}>
-              {item.closeHour}
-            </Grid>
-            <Grid item style={{ flex: 1 }}>
-              {item.tags.join(", ")}
-            </Grid>
-            <Grid item container style={{ flex: 1 }} justify="space-around">
-              <Grid item>
-                <IconButton size="small">
-                  <EditOutlined className={classes.icon} />
-                </IconButton>
+        <GridTable headers={headers} items={categories}>
+          {({ item }) => (
+            <Fragment>
+              <Grid item style={{ flex: 1 }}>
+                {item.name}
               </Grid>
-              <Grid item>
-                <IconButton size="small">
-                  <DeleteOutline className={classes.icon} />
-                </IconButton>
+              <Grid item style={{ flex: 1 }}>
+                {item.price}
               </Grid>
-            </Grid>
-          </Fragment>
-        )}
-      </GridTable>
-      <Grid
-        container
-        justify="space-between"
-        className={classes.paginationWrapper}
-      >
-        <Grid item></Grid>
-        <Grid item>
-          <Pagination
-            count={totalPage}
-            page={page}
-            onPageChange={(page) => setPage(page)}
-          />
+              <Grid item style={{ flex: 1 }}>
+                {item.discountPercent}
+              </Grid>
+              <Grid item style={{ flex: 1 }}>
+                {item.openHour}
+              </Grid>
+              <Grid item style={{ flex: 1 }}>
+                {item.closeHour}
+              </Grid>
+              <Grid item style={{ flex: 1 }}>
+                {item.tags.join(", ")}
+              </Grid>
+              <Grid item container style={{ flex: 1 }} justify="space-around">
+                <Grid item>
+                  <IconButton size="small">
+                    <EditOutlined className={classes.icon} />
+                  </IconButton>
+                </Grid>
+                <Grid item>
+                  <IconButton size="small">
+                    <DeleteOutline className={classes.icon} />
+                  </IconButton>
+                </Grid>
+              </Grid>
+            </Fragment>
+          )}
+        </GridTable>
+        <Grid
+          container
+          justify="space-between"
+          className={classes.paginationWrapper}
+        >
+          <Grid item></Grid>
+          <Grid item>
+            <Pagination
+              count={totalPage}
+              page={page}
+              onPageChange={(page) => setPage(page)}
+            />
+          </Grid>
+          <Grid item>
+            <Select
+              value={perPage}
+              onChange={setPerPage}
+              items={[10, 20, 30]}
+            />
+          </Grid>
         </Grid>
-        <Grid item>
-          <Select value={perPage} onChange={setPerPage} items={[10, 20, 30]} />
-        </Grid>
-      </Grid>
-    </Card>
+      </Card>
+    </Box>
   );
 };
 

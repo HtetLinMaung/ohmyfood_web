@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box, Grid } from "@material-ui/core";
 import { CategoryContext } from "../../context/CategoryProvider";
@@ -11,6 +11,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
+import CategoryTypeDialog from "../category/CategoryTypeDialog";
 
 const useStyles = makeStyles(() => ({
   root: {},
@@ -44,6 +45,7 @@ const CategoryTypeList = () => {
   const classes = useStyles();
   const [, setLoading] = useContext(AppContext);
   const [state, dispatch] = useContext(CategoryContext);
+  const [typeDialog, setTypeDialog] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -89,6 +91,10 @@ const CategoryTypeList = () => {
     })();
   }, [setLoading, dispatch]);
 
+  const handleTypeDialogClose = () => {
+    setTypeDialog(false);
+  };
+
   return (
     <Box className={classes.root}>
       <Grid container alignItems="center" spacing={1}>
@@ -129,7 +135,12 @@ const CategoryTypeList = () => {
           </IconButton>
         </Grid>
         <Grid item>
-          <Button variant="outlined" size="small" className={classes.addButton}>
+          <Button
+            variant="outlined"
+            size="small"
+            className={classes.addButton}
+            onClick={() => setTypeDialog(true)}
+          >
             Add more
           </Button>
         </Grid>
@@ -143,6 +154,7 @@ const CategoryTypeList = () => {
           </IconButton>
         </Grid>
       </Grid>
+      <CategoryTypeDialog open={typeDialog} onClose={handleTypeDialogClose} />
     </Box>
   );
 };
