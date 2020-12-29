@@ -37,8 +37,8 @@ const Pagination = ({ count, page, onPageChange }) => {
   const PageList = () =>
     count > 7
       ? null
-      : range(1, count).map((n) => (
-          <Grid item>
+      : range(1, count).map((n, i) => (
+          <Grid item key={`page${i}`}>
             <Card
               onClick={() => onPageChange(n)}
               className={classes.card}

@@ -11,6 +11,16 @@ const http = {
       body: JSON.stringify(body || {}),
     }).then((res) => res.json());
   },
+  async upload(formData) {
+    return fetch(`${production.host}/upload-image`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${localStorage.getItem("ohmyfood_token")}`,
+      },
+      body: formData,
+    }).then((res) => res.json());
+  },
 };
 
 export default http;

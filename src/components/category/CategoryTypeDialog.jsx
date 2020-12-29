@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
@@ -8,8 +8,13 @@ import TextField from "../form/TextField";
 import { Grid } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import ImageUploader from "../upload/ImageUploader";
+import http from "../../utils/http";
 
 const useStyles = makeStyles(() => ({
+  root: {
+    borderRadius: 20,
+    padding: "1.4rem 1rem",
+  },
   button: {
     textTransform: "capitalize",
     borderRadius: 10,
@@ -20,15 +25,31 @@ const useStyles = makeStyles(() => ({
 
 const CategoryTypeDialog = ({ open, onClose }) => {
   const classes = useStyles();
+  const [name, setName] = useState("");
+  const [nameErrLabel, setNameErrLabel] = useState("");
+  const [image, setImage] = useState(null);
 
-  const uploadHandler = (file) => {};
+  const saveHandler = async () => {
+    if (image && name) {
+      const formData = new FormData();
+      formData.append("image", image);
+      formData.append("oldImage", "");
+      const response = await http.upload(formData);
+      console.log(response);
+      onClose();
+    }
+  };
 
-  const saveHandler = () => {
-    onClose();
+  const nameChangeHandler = (e) => {
+    setNameErrLabel("");
+    if (!e.target.value) {
+      setNameErrLabel("Name must not be empty!");
+    }
+    setName(e.target.value);
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose} classes={{ paper: classes.root }}>
       <DialogTitle style={{ textAlign: "center" }}>
         New Category Type
       </DialogTitle>
@@ -40,7 +61,7 @@ const CategoryTypeDialog = ({ open, onClose }) => {
           style={{ marginBottom: "1rem" }}
         >
           <Grid item>
-            <ImageUploader width={115} height={120} onUpload={uploadHandler} />
+            <ImageUploader width={115} height={120} onUpload={setImage} />
           </Grid>
         </Grid>
 
@@ -48,10 +69,15 @@ const CategoryTypeDialog = ({ open, onClose }) => {
           container
           spacing={1}
           justify="center"
-          style={{ marginBottom: "2rem" }}
+          style={{ marginBottom: "1.5rem" }}
         >
           <Grid item>
-            <TextField placeholder="Name" raised={true} />
+            <TextField
+              placeholder="Name"
+              errorLabel={nameErrLabel}
+              value={name}
+              onChange={nameChangeHandler}
+            />
           </Grid>
         </Grid>
       </DialogContent>
@@ -61,6 +87,7 @@ const CategoryTypeDialog = ({ open, onClose }) => {
           Cancel
         </Button>
         <Button
+          disabled={!image || !!nameErrLabel}
           variant="contained"
           className={classes.button}
           style={{ background: "#3696F8", color: "#fff" }}
