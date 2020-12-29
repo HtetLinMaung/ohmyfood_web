@@ -43,15 +43,21 @@ const useStyles = makeStyles(() => ({
 
 const CategoryTypeList = () => {
   const classes = useStyles();
-  const [, setLoading] = useContext(AppContext);
+  const [, dispatchApp] = useContext(AppContext);
   const [state, dispatch] = useContext(CategoryContext);
   const [typeDialog, setTypeDialog] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(0);
+  const perPage = 5;
 
   useEffect(() => {
     (async () => {
       const query = `
         query CategoryTypes($page: Int!, $perPage: Int!) {
           categoryTypes(page: $page, perPage: $perPage) {
+              totalRows
+              page
+              perPage
               categoryTypes {
                   _id
                   name
@@ -65,15 +71,15 @@ const CategoryTypeList = () => {
         }
       `;
 
-      setLoading(true);
+      dispatchApp({ type: "LOADING", payload: true });
       const response = await http.post({
         query,
         variables: {
-          page: 0,
-          perPage: 0,
+          page,
+          perPage,
         },
       });
-      setLoading(false);
+      dispatchApp({ type: "LOADING", payload: false });
       dispatch({
         type: "SET_STATE",
         payload: {
@@ -88,8 +94,19 @@ const CategoryTypeList = () => {
             : null,
         },
       });
+      setTotalPage(Math.ceil(response.data.categoryTypes.totalRows / perPage));
     })();
-  }, [setLoading, dispatch]);
+  }, [dispatchApp, dispatch, page, setTotalPage]);
+
+  const handlePageChange = (type) => {
+    switch (type) {
+      case "next":
+        if (page !== totalPage) setPage(page + 1);
+        break;
+      default:
+        if (page !== 1) setPage(page - 1);
+    }
+  };
 
   const handleTypeDialogClose = () => {
     setTypeDialog(false);
@@ -127,6 +144,7 @@ const CategoryTypeList = () => {
       >
         <Grid item>
           <IconButton
+            onClick={handlePageChange.bind(this, "prev")}
             size="small"
             aria-label="prev"
             className={classes.iconButton}
@@ -146,6 +164,7 @@ const CategoryTypeList = () => {
         </Grid>
         <Grid item>
           <IconButton
+            onClick={handlePageChange.bind(this, "next")}
             size="small"
             aria-label="next"
             className={classes.iconButton}

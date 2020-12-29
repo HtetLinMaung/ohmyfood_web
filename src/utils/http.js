@@ -15,7 +15,6 @@ const http = {
     return fetch(`${production.host}/upload-image`, {
       method: "POST",
       headers: {
-        "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${localStorage.getItem("ohmyfood_token")}`,
       },
       body: formData,

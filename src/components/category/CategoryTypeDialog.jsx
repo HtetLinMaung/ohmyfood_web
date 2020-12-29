@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
@@ -9,6 +9,7 @@ import { Grid } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import ImageUploader from "../upload/ImageUploader";
 import http from "../../utils/http";
+import { AppContext } from "../../context/AppProvider";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -24,18 +25,37 @@ const useStyles = makeStyles(() => ({
 }));
 
 const CategoryTypeDialog = ({ open, onClose }) => {
+  const [state, dispatch] = useContext(AppContext);
   const classes = useStyles();
   const [name, setName] = useState("");
   const [nameErrLabel, setNameErrLabel] = useState("");
   const [image, setImage] = useState(null);
 
   const saveHandler = async () => {
-    if (image && name) {
+    if (image && name && !state.loading) {
       const formData = new FormData();
       formData.append("image", image);
       formData.append("oldImage", "");
-      const response = await http.upload(formData);
-      console.log(response);
+      dispatch({ type: "LOADING", payload: true });
+      const { imageUrl } = await http.upload(formData);
+
+      const query = `
+        mutation CreateCategoryType($name: String!, $imageUrl: String!, $include: Boolean!, $categories: [String!]) {
+          createCategoryType(categoryTypeInput: {name: $name, imageUrl: $imageUrl, include: $include, categories: $categories}) {
+              _id
+          }
+        }
+      `;
+      await http.post({
+        query,
+        variables: {
+          name,
+          imageUrl,
+          include: true,
+          categories: [],
+        },
+      });
+      dispatch({ type: "LOADING", payload: false });
       onClose();
     }
   };

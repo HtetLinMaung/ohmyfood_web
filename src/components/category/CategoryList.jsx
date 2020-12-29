@@ -87,7 +87,7 @@ const useStyles = makeStyles(() => ({
 
 const CategoryList = () => {
   const classes = useStyles();
-  const [, setLoading] = useContext(AppContext);
+  const [, dispatchApp] = useContext(AppContext);
   const [{ categoryType, categories }, dispatch] = useContext(CategoryContext);
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
@@ -144,14 +144,14 @@ const CategoryList = () => {
       `;
 
       if (categoryType) {
-        setLoading(true);
+        dispatchApp({ type: "LOADING", payload: true });
         const response = await http.post({
           query,
           variables: {
             id: categoryType._id,
           },
         });
-        setLoading(false);
+        dispatchApp({ type: "LOADING", payload: false });
         const { categories } = response.data.categoryType;
         dispatch({
           type: "CATEGORIES",
@@ -160,7 +160,7 @@ const CategoryList = () => {
         setTotalPage(Math.ceil(categories.length / perPage));
       }
     })();
-  }, [setLoading, dispatch, categoryType]);
+  }, [dispatchApp, dispatch, categoryType]);
 
   if (!categoryType) {
     return null;

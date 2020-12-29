@@ -42,7 +42,7 @@ const useStyles = makeStyles(() => ({
 
 const Login = () => {
   const history = useHistory();
-  const [loading, setLoading] = useContext(AppContext);
+  const [state, dispatch] = useContext(AppContext);
   const [phone, setPhone] = useState("09404888722");
   const [password, setPassword] = useState("123456");
   const [phoneErr, setPhoneErr] = useState("");
@@ -94,7 +94,7 @@ const Login = () => {
             }
           }
         `;
-        setLoading(true);
+        dispatch({ type: "LOADING", payload: true });
         const response = await fetch(production.gql_api, {
           method: "POST",
           headers: {
@@ -108,7 +108,7 @@ const Login = () => {
             },
           }),
         }).then((res) => res.json());
-        setLoading(false);
+        dispatch({ type: "LOADING", payload: false });
         if (response.data.login.user.role !== "admin") {
           const error = new Error("Unauthorized!");
           throw error;
@@ -117,7 +117,7 @@ const Login = () => {
         history.push("/admin");
       }
     } catch (err) {
-      if (loading) setLoading(false);
+      if (state.loading) dispatch({ type: "LOADING", payload: true });
       alert(err.message);
     }
   };
@@ -171,7 +171,7 @@ const Login = () => {
                 variant="contained"
                 className={classes.button}
                 onClick={loginHandler}
-                disabled={!isValidate() || loading}
+                disabled={!isValidate() || state.loading}
               >
                 Log In
               </Button>

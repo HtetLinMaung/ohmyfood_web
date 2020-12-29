@@ -1,9 +1,5 @@
 import React, { useContext, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { CategoryContext } from "../../context/CategoryProvider";
-import http from "../../utils/http";
-import { AppContext } from "../../context/AppProvider";
-import { NotificationsNoneOutlined, Search } from "@material-ui/icons";
 
 const useStyles = makeStyles(() => ({
   input: {
