@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Switch, Route, useLocation } from "react-router-dom";
 
@@ -36,6 +36,7 @@ const AppContainer = ({ routes }) => {
   const location = useLocation();
   const classes = useStyles();
   const [open, setOpen] = useState(true);
+
   useEffect(() => {
     if (!(location.pathname.indexOf("/admin/login") !== -1 || matches)) {
       setOpen(true);
@@ -43,6 +44,7 @@ const AppContainer = ({ routes }) => {
       setOpen(false);
     }
   }, [location, matches]);
+
   const showHideStyle = {
     display: location.pathname.indexOf("/admin/login") !== -1 ? "none" : "",
   };

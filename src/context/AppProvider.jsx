@@ -20,6 +20,10 @@ const reducer = (state, action) => {
       return { ...state, loading: action.payload };
     case "TOKEN":
       return { ...state, token: action.payload };
+    case "DELETE_ID":
+      return { ...state, deleteId: action.payload };
+    case "DELETE_DIALOG":
+      return { ...state, deleteDialog: action.payload };
     case "SET_STATE":
       return { ...state, ...action.payload };
     default:
@@ -32,6 +36,8 @@ const AppProvider = ({ children }) => {
   const value = useReducer(reducer, {
     loading: false,
     token: "",
+    deleteId: "",
+    deleteDialog: false,
   });
 
   return (

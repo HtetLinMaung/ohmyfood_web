@@ -17,6 +17,7 @@ import Button from "@material-ui/core/Button";
 import GridTable from "../table/GridTable";
 import Pagination from "../table/Pagination";
 import Select from "../form/Select";
+import DeleteDialog from "../DeleteDialog";
 
 const buttonStyle = {
   textTransform: "capitalize",
@@ -87,7 +88,7 @@ const useStyles = makeStyles(() => ({
 
 const CategoryList = () => {
   const classes = useStyles();
-  const [, dispatchApp] = useContext(AppContext);
+  const [state, dispatchApp] = useContext(AppContext);
   const [{ categoryType, categories }, dispatch] = useContext(CategoryContext);
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
@@ -174,7 +175,34 @@ const CategoryList = () => {
     });
   };
 
-  const handleDelete = () => {};
+  const handleDelete = () => {
+    dispatchApp({ type: "DELETE_DIALOG", payload: true });
+  };
+
+  const deleteCategoryType = async () => {
+    onClose();
+    dispatchApp({ type: "LOADING", payload: true });
+    const query = `
+        mutation DeleteCategoryType($id: ID!, $permanent: Boolean!) {
+            deleteCategoryType(id: $id, permanent: $permanent)
+        }
+    `;
+
+    await http.post({
+      query,
+      variables: {
+        id: categoryType._id,
+        permanent: false,
+      },
+    });
+
+    dispatchApp({ type: "LOADING", payload: false });
+    dispatch({ type: "TYPE_CHANGE", payload: "delete" });
+  };
+
+  const onClose = () => {
+    dispatchApp({ type: "DELETE_DIALOG", payload: false });
+  };
 
   if (!categoryType) {
     return null;
@@ -203,7 +231,7 @@ const CategoryList = () => {
               size="small"
               aria-label="delete"
               className={classes.iconButton}
-              style={{ background: "red" }}
+              style={{ background: "#F44336" }}
               onClick={handleDelete}
             >
               <DeleteOutline
@@ -339,6 +367,11 @@ const CategoryList = () => {
           </Grid>
         </Grid>
       </Card>
+      <DeleteDialog
+        open={state.deleteDialog}
+        onClose={onClose}
+        handleDelete={deleteCategoryType}
+      />
     </Box>
   );
 };
