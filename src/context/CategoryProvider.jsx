@@ -10,6 +10,18 @@ const reducer = (state, action) => {
       return { ...state, categories: action.payload };
     case "CATEGORY_TYPE":
       return { ...state, categoryType: action.payload };
+    case "TYPE_DIALOG":
+      return { ...state, typeDialog: action.payload };
+    case "NAME":
+      return { ...state, name: action.payload };
+    case "IMAGE":
+      return { ...state, image: action.payload };
+    case "IMAGE_SRC":
+      return { ...state, imageSrc: action.payload };
+    case "IS_UPDATE":
+      return { ...state, isUpdate: action.payload };
+    case "TYPE_CHANGE":
+      return { ...state, categoryTypeChanged: action.payload };
     case "SET_STATE":
       return { ...state, ...action.payload };
     default:
@@ -22,6 +34,12 @@ const CategoryProvider = ({ children }) => {
     categoryTypes: [],
     categories: [],
     categoryType: null,
+    typeDialog: false,
+    name: "",
+    image: null,
+    imageSrc: "",
+    isUpdate: false,
+    categoryTypeChanged: "",
   });
 
   return (

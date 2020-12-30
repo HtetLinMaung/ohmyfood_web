@@ -160,7 +160,21 @@ const CategoryList = () => {
         setTotalPage(Math.ceil(categories.length / perPage));
       }
     })();
-  }, [dispatchApp, dispatch, categoryType]);
+  }, [dispatchApp, dispatch, categoryType, perPage]);
+
+  const handleEdit = () => {
+    dispatch({
+      type: "SET_STATE",
+      payload: {
+        name: categoryType.name,
+        imageSrc: categoryType.imageUrl,
+        typeDialog: true,
+        isUpdate: true,
+      },
+    });
+  };
+
+  const handleDelete = () => {};
 
   if (!categoryType) {
     return null;
@@ -177,8 +191,9 @@ const CategoryList = () => {
           <Grid item>
             <IconButton
               size="small"
-              aria-label="search"
+              aria-label="edit"
               className={classes.iconButton}
+              onClick={handleEdit}
             >
               <EditOutlined className={classes.icon} />
             </IconButton>
@@ -186,9 +201,10 @@ const CategoryList = () => {
           <Grid item>
             <IconButton
               size="small"
-              aria-label="search"
+              aria-label="delete"
               className={classes.iconButton}
               style={{ background: "red" }}
+              onClick={handleDelete}
             >
               <DeleteOutline
                 className={classes.icon}

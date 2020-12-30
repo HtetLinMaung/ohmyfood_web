@@ -10,6 +10,7 @@ import Button from "@material-ui/core/Button";
 import ImageUploader from "../upload/ImageUploader";
 import http from "../../utils/http";
 import { AppContext } from "../../context/AppProvider";
+import { CategoryContext } from "../../context/CategoryProvider";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -26,38 +27,85 @@ const useStyles = makeStyles(() => ({
 
 const CategoryTypeDialog = ({ open, onClose }) => {
   const [state, dispatch] = useContext(AppContext);
+  const [
+    { name, image, imageSrc, isUpdate, categoryType },
+    categoryDispatch,
+  ] = useContext(CategoryContext);
   const classes = useStyles();
-  const [name, setName] = useState("");
   const [nameErrLabel, setNameErrLabel] = useState("");
-  const [image, setImage] = useState(null);
 
   const saveHandler = async () => {
-    if (image && name && !state.loading) {
+    if ((image || imageSrc) && name && !state.loading) {
       const formData = new FormData();
-      formData.append("image", image);
-      formData.append("oldImage", "");
       dispatch({ type: "LOADING", payload: true });
-      const { imageUrl } = await http.upload(formData);
 
-      const query = `
+      if (!isUpdate) {
+        formData.append("image", image);
+        formData.append("oldImage", "");
+
+        const { imageUrl } = await http.upload(formData);
+
+        const query = `
         mutation CreateCategoryType($name: String!, $imageUrl: String!, $include: Boolean!, $categories: [String!]) {
           createCategoryType(categoryTypeInput: {name: $name, imageUrl: $imageUrl, include: $include, categories: $categories}) {
               _id
           }
         }
       `;
-      await http.post({
-        query,
-        variables: {
-          name,
-          imageUrl,
-          include: true,
-          categories: [],
-        },
-      });
+        await http.post({
+          query,
+          variables: {
+            name,
+            imageUrl,
+            include: true,
+            categories: [],
+          },
+        });
+        categoryDispatch({ type: "TYPE_CHANGE", payload: "save" });
+      } else {
+        let oldImage = categoryType.imageUrl;
+
+        if (image) {
+          formData.append("image", image);
+          formData.append("oldImage", oldImage);
+          const { imageUrl } = await http.upload(formData);
+          oldImage = imageUrl;
+        }
+
+        const query = `
+          mutation UpdateCategoryType($id: ID!, $name: String!, $imageUrl: String!, $include: Boolean!, $categories: [String!]) {
+            updateCategoryType(id: $id, categoryTypeInput: {name: $name, imageUrl: $imageUrl, include: $include, categories: $categories}) {
+                _id
+            }
+          }
+        `;
+
+        await http.post({
+          query,
+          variables: {
+            id: categoryType._id,
+            name,
+            imageUrl: oldImage,
+            include: categoryType.include,
+            categories: categoryType.categories.map((category) => category._id),
+          },
+        });
+        categoryDispatch({
+          type: "SET_STATE",
+          payload: {
+            isUpdate: false,
+            categoryTypeChanged: "update",
+          },
+        });
+      }
+
       dispatch({ type: "LOADING", payload: false });
       onClose();
     }
+  };
+
+  const setImage = (file) => {
+    categoryDispatch({ type: "IMAGE", payload: file });
   };
 
   const nameChangeHandler = (e) => {
@@ -65,7 +113,7 @@ const CategoryTypeDialog = ({ open, onClose }) => {
     if (!e.target.value) {
       setNameErrLabel("Name must not be empty!");
     }
-    setName(e.target.value);
+    categoryDispatch({ type: "NAME", payload: e.target.value });
   };
 
   return (
@@ -81,7 +129,12 @@ const CategoryTypeDialog = ({ open, onClose }) => {
           style={{ marginBottom: "1rem" }}
         >
           <Grid item>
-            <ImageUploader width={115} height={120} onUpload={setImage} />
+            <ImageUploader
+              src={imageSrc}
+              width={115}
+              height={120}
+              onUpload={setImage}
+            />
           </Grid>
         </Grid>
 
@@ -107,13 +160,13 @@ const CategoryTypeDialog = ({ open, onClose }) => {
           Cancel
         </Button>
         <Button
-          disabled={!image || !!nameErrLabel}
+          disabled={(!image && !imageSrc) || !!nameErrLabel}
           variant="contained"
           className={classes.button}
           style={{ background: "#3696F8", color: "#fff" }}
           onClick={saveHandler}
         >
-          Save
+          {isUpdate ? "Update" : "Save"}
         </Button>
       </DialogActions>
     </Dialog>

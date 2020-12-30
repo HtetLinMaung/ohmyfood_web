@@ -11,7 +11,6 @@ import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
-import CategoryTypeDialog from "../category/CategoryTypeDialog";
 
 const useStyles = makeStyles(() => ({
   root: {},
@@ -45,10 +44,10 @@ const CategoryTypeList = () => {
   const classes = useStyles();
   const [, dispatchApp] = useContext(AppContext);
   const [state, dispatch] = useContext(CategoryContext);
-  const [typeDialog, setTypeDialog] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
   const perPage = 5;
+  const { categoryTypeChanged } = state;
 
   useEffect(() => {
     (async () => {
@@ -96,7 +95,7 @@ const CategoryTypeList = () => {
       });
       setTotalPage(Math.ceil(response.data.categoryTypes.totalRows / perPage));
     })();
-  }, [dispatchApp, dispatch, page, setTotalPage]);
+  }, [dispatchApp, dispatch, page, setTotalPage, categoryTypeChanged]);
 
   const handlePageChange = (type) => {
     switch (type) {
@@ -106,10 +105,6 @@ const CategoryTypeList = () => {
       default:
         if (page !== 1) setPage(page - 1);
     }
-  };
-
-  const handleTypeDialogClose = () => {
-    setTypeDialog(false);
   };
 
   return (
@@ -157,7 +152,7 @@ const CategoryTypeList = () => {
             variant="outlined"
             size="small"
             className={classes.addButton}
-            onClick={() => setTypeDialog(true)}
+            onClick={() => dispatch({ type: "TYPE_DIALOG", payload: true })}
           >
             Add more
           </Button>
@@ -173,7 +168,6 @@ const CategoryTypeList = () => {
           </IconButton>
         </Grid>
       </Grid>
-      <CategoryTypeDialog open={typeDialog} onClose={handleTypeDialogClose} />
     </Box>
   );
 };
