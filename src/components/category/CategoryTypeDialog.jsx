@@ -25,14 +25,27 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const CategoryTypeDialog = ({ open, onClose }) => {
+const CategoryTypeDialog = () => {
   const [state, dispatch] = useContext(AppContext);
   const [
-    { name, image, imageSrc, isUpdate, categoryType },
+    { name, image, imageSrc, isUpdate, categoryType, typeDialog },
     categoryDispatch,
   ] = useContext(CategoryContext);
   const classes = useStyles();
   const [nameErrLabel, setNameErrLabel] = useState("");
+
+  const onClose = () => {
+    categoryDispatch({
+      type: "SET_STATE",
+      payload: {
+        typeDialog: false,
+        name: "",
+        image: null,
+        imageSrc: "",
+        isUpdate: false,
+      },
+    });
+  };
 
   const saveHandler = async () => {
     if ((image || imageSrc) && name && !state.loading) {
@@ -117,9 +130,13 @@ const CategoryTypeDialog = ({ open, onClose }) => {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} classes={{ paper: classes.root }}>
+    <Dialog
+      open={typeDialog}
+      onClose={onClose}
+      classes={{ paper: classes.root }}
+    >
       <DialogTitle style={{ textAlign: "center" }}>
-        New Category Type
+        {isUpdate ? "Update" : "New"} Category Type
       </DialogTitle>
       <DialogContent style={{ padding: "0 3rem" }}>
         <Grid

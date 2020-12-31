@@ -252,6 +252,9 @@ const CategoryList = () => {
               size="small"
               variant="contained"
               className={classes.addButton}
+              onClick={() =>
+                dispatch({ type: "CATEGORY_DIALOG", payload: true })
+              }
             >
               Add
             </Button>

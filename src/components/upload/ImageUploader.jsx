@@ -24,7 +24,13 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ImageUploader = ({ width, height, onUpload, src }) => {
+const ImageUploader = ({
+  width,
+  height,
+  onUpload,
+  src,
+  variant = "outlined",
+}) => {
   const [imageUrl, setImageUrl] = useState(src);
   const inputEl = useRef(null);
   const classes = useStyles();
@@ -47,7 +53,7 @@ const ImageUploader = ({ width, height, onUpload, src }) => {
 
   return (
     <Button
-      variant="outlined"
+      variant={variant}
       className={classes.root}
       style={{
         width: width,

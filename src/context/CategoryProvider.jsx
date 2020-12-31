@@ -22,6 +22,8 @@ const reducer = (state, action) => {
       return { ...state, isUpdate: action.payload };
     case "TYPE_CHANGE":
       return { ...state, categoryTypeChanged: action.payload };
+    case "CATEGORY_DIALOG":
+      return { ...state, categoryDialog: action.payload };
     case "SET_STATE":
       return { ...state, ...action.payload };
     default:
@@ -40,6 +42,7 @@ const CategoryProvider = ({ children }) => {
     imageSrc: "",
     isUpdate: false,
     categoryTypeChanged: "",
+    categoryDialog: false,
   });
 
   return (
