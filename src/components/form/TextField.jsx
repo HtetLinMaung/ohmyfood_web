@@ -54,7 +54,7 @@ const useStyles = makeStyles(() => ({
     },
   },
   label: {
-    fontSize: 14,
+    fontSize: 13,
     lineHeight: 2,
   },
 }));

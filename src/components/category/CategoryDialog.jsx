@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import ImageUploader from "../upload/ImageUploader";
 import TextField from "../form/TextField";
+import TimePicker from "../form/TimePicker";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -24,9 +25,10 @@ const useStyles = makeStyles(() => ({
 
 const CategoryDialog = () => {
   const classes = useStyles();
-  const [{ isUpdate, categoryDialog, imageSrc }, categoryDispatch] = useContext(
-    CategoryContext
-  );
+  const [
+    { isUpdate, categoryDialog, imageSrc, openHour, closeHour },
+    categoryDispatch,
+  ] = useContext(CategoryContext);
 
   const onClose = () => {
     categoryDispatch({
@@ -51,16 +53,46 @@ const CategoryDialog = () => {
     >
       <DialogTitle>{isUpdate ? "Update" : "New"} Category</DialogTitle>
       <DialogContent>
-        <Grid container spacing={3}>
-          <Grid itme style={{ flex: 1 }}>
+        <Grid container>
+          <Grid itme lg={7}>
             <TextField outlined label="Category Name" />
+
+            <Grid container spacing={1}>
+              <Grid item lg={6}>
+                <TextField outlined label="Price" />
+              </Grid>
+              <Grid item lg={6}>
+                <TextField outlined label="Discount Percent" />
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item>
+          <Grid item lg={5} container justify="flex-end" alignItems="center">
             <ImageUploader
               src={imageSrc}
-              width={115}
-              height={120}
+              width={172.5}
+              height={177}
               onUpload={setImage}
+            />
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={1}>
+          <Grid item lg={3}>
+            <TimePicker
+              label="Open Hour"
+              value={openHour}
+              onChange={(date) =>
+                categoryDispatch({ type: "OPEN_HOUR", payload: date })
+              }
+            />
+          </Grid>
+          <Grid item lg={3}>
+            <TimePicker
+              label="Close Hour"
+              value={closeHour}
+              onChange={(date) =>
+                categoryDispatch({ type: "CLOSE_HOUR", payload: date })
+              }
             />
           </Grid>
         </Grid>

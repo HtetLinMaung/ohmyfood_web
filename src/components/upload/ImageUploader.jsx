@@ -62,7 +62,7 @@ const ImageUploader = ({
       }}
       onClick={handleClick}
     >
-      Image
+      {!imageUrl ? "Image" : ""}
       <input
         ref={inputEl}
         type="file"

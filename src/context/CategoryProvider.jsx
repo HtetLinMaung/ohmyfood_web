@@ -24,6 +24,10 @@ const reducer = (state, action) => {
       return { ...state, categoryTypeChanged: action.payload };
     case "CATEGORY_DIALOG":
       return { ...state, categoryDialog: action.payload };
+    case "OPEN_HOUR":
+      return { ...state, openHour: action.payload };
+    case "CLOSE_HOUR":
+      return { ...state, closeHour: action.payload };
     case "SET_STATE":
       return { ...state, ...action.payload };
     default:
@@ -43,6 +47,8 @@ const CategoryProvider = ({ children }) => {
     isUpdate: false,
     categoryTypeChanged: "",
     categoryDialog: false,
+    openHour: null,
+    closeHour: null,
   });
 
   return (

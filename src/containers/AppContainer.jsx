@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Switch, Route, useLocation } from "react-router-dom";
 
@@ -15,7 +15,6 @@ import { useMediaQuery } from "@material-ui/core";
 const useStyles = makeStyles(() => ({
   container: {
     flex: 1,
-    // paddingTop: "6.5rem",
   },
   fab: {
     transition: "all 0.3s",
