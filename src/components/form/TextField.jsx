@@ -64,13 +64,19 @@ const TextField = (props) => {
   const inputProps = { ...props };
   delete inputProps.errorLabel;
   delete inputProps.label;
+  delete inputProps.hideErrorLabel;
+  delete inputProps.outlined;
+  delete inputProps.focus;
 
   const Label = () =>
     props.label ? <Box className={classes.label}>{props.label}</Box> : null;
 
-  const ErrorLabel = () => (
-    <Box className={classes.errorLabel}>{props.errorLabel}</Box>
-  );
+  const ErrorLabel = () =>
+    !props.hideErrorLabel ? (
+      <Box className={classes.errorLabel}>{props.errorLabel}</Box>
+    ) : null;
+
+  console.log(inputProps);
 
   return (
     <Fragment>

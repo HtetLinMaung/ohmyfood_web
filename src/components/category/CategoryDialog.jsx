@@ -8,6 +8,7 @@ import Grid from "@material-ui/core/Grid";
 import ImageUploader from "../upload/ImageUploader";
 import TextField from "../form/TextField";
 import TimePicker from "../form/TimePicker";
+import ChipArea from "../custom/ChipArea";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -26,7 +27,7 @@ const useStyles = makeStyles(() => ({
 const CategoryDialog = () => {
   const classes = useStyles();
   const [
-    { isUpdate, categoryDialog, imageSrc, openHour, closeHour },
+    { isUpdate, categoryDialog, imageSrc, openHour, closeHour, tags },
     categoryDispatch,
   ] = useContext(CategoryContext);
 
@@ -54,7 +55,7 @@ const CategoryDialog = () => {
       <DialogTitle>{isUpdate ? "Update" : "New"} Category</DialogTitle>
       <DialogContent>
         <Grid container>
-          <Grid itme lg={7}>
+          <Grid item lg={7}>
             <TextField outlined label="Category Name" />
 
             <Grid container spacing={1}>
@@ -92,6 +93,18 @@ const CategoryDialog = () => {
               value={closeHour}
               onChange={(date) =>
                 categoryDispatch({ type: "CLOSE_HOUR", payload: date })
+              }
+            />
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={1}>
+          <Grid item lg={12}>
+            <ChipArea
+              label="Tags"
+              tags={tags}
+              onTagAdded={(tags) =>
+                categoryDispatch({ type: "TAGS", payload: tags })
               }
             />
           </Grid>

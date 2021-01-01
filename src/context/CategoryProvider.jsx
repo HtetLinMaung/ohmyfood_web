@@ -28,6 +28,8 @@ const reducer = (state, action) => {
       return { ...state, openHour: action.payload };
     case "CLOSE_HOUR":
       return { ...state, closeHour: action.payload };
+    case "TAGS":
+      return { ...state, tags: action.payload };
     case "SET_STATE":
       return { ...state, ...action.payload };
     default:
@@ -49,6 +51,7 @@ const CategoryProvider = ({ children }) => {
     categoryDialog: false,
     openHour: null,
     closeHour: null,
+    tags: [],
   });
 
   return (
