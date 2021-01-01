@@ -30,6 +30,8 @@ const reducer = (state, action) => {
       return { ...state, closeHour: action.payload };
     case "TAGS":
       return { ...state, tags: action.payload };
+    case "TYPES":
+      return { ...state, types: action.payload };
     case "SET_STATE":
       return { ...state, ...action.payload };
     default:
@@ -52,6 +54,7 @@ const CategoryProvider = ({ children }) => {
     openHour: null,
     closeHour: null,
     tags: [],
+    types: [],
   });
 
   return (

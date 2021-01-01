@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Dialog from "@material-ui/core/Dialog";
 import { DialogActions, DialogContent, DialogTitle } from "@material-ui/core";
@@ -9,6 +9,9 @@ import ImageUploader from "../upload/ImageUploader";
 import TextField from "../form/TextField";
 import TimePicker from "../form/TimePicker";
 import ChipArea from "../custom/ChipArea";
+import MultiSelect from "../form/MultiSelect";
+import { AppContext } from "../../context/AppProvider";
+import http from "../../utils/http";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -26,10 +29,38 @@ const useStyles = makeStyles(() => ({
 
 const CategoryDialog = () => {
   const classes = useStyles();
+  const [, dispatch] = useContext(AppContext);
   const [
-    { isUpdate, categoryDialog, imageSrc, openHour, closeHour, tags },
+    { isUpdate, categoryDialog, imageSrc, openHour, closeHour, tags, types },
     categoryDispatch,
   ] = useContext(CategoryContext);
+  const [typeList, setTypeList] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      const query = `
+        query CategoryTypes($page: Int!, $perPage: Int!) {
+          categoryTypes(page: $page, perPage: $perPage) {
+              categoryTypes {
+                  key: _id
+                  value: name
+              }
+          }
+        }
+      `;
+
+      dispatch({ type: "LOADING", payload: true });
+      const response = await http.post({
+        query,
+        variables: {
+          page: 0,
+          perPage: 0,
+        },
+      });
+      dispatch({ type: "LOADING", payload: false });
+      setTypeList(response.data.categoryTypes.categoryTypes);
+    })();
+  }, [dispatch]);
 
   const onClose = () => {
     categoryDispatch({
@@ -44,6 +75,10 @@ const CategoryDialog = () => {
 
   const setImage = (file) => {
     categoryDispatch({ type: "IMAGE", payload: file });
+  };
+
+  const onSelectChange = (e) => {
+    categoryDispatch({ type: "TYPES", payload: e.target.value });
   };
 
   return (
@@ -106,6 +141,16 @@ const CategoryDialog = () => {
               onTagAdded={(tags) =>
                 categoryDispatch({ type: "TAGS", payload: tags })
               }
+            />
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={1}>
+          <Grid item lg={5}>
+            <MultiSelect
+              items={typeList}
+              value={types}
+              onChange={onSelectChange}
             />
           </Grid>
         </Grid>

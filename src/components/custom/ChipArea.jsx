@@ -4,12 +4,14 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import Dialog from "@material-ui/core/Dialog";
 import TextField from "../form/TextField";
+import Chip from "@material-ui/core/Chip";
 
 const useStyles = makeStyles(() => ({
   root: {
     borderRadius: 10,
-    height: 160,
+    height: 140,
     width: "100%",
+
     "&:hover": {
       background: "#fff",
     },
@@ -21,6 +23,15 @@ const useStyles = makeStyles(() => ({
   dialog: {
     borderRadius: 10,
     width: 200,
+  },
+  chip: {
+    textTransform: "none",
+    fontSize: 11,
+    margin: ".2rem",
+  },
+  btnLabel: {
+    display: "flex",
+    flexWrap: "wrap",
   },
 }));
 
@@ -36,6 +47,21 @@ const ChipArea = ({ label, onTagAdded, tags = [] }) => {
     setTag("");
   };
 
+  const handleClickChip = (e, i) => {
+    e.stopPropagation();
+    onTagAdded(tags.filter((_, index) => index !== i));
+  };
+
+  const Chips = () =>
+    tags.map((tag, i) => (
+      <Chip
+        className={classes.chip}
+        label={tag}
+        key={i}
+        onClick={(e) => handleClickChip(e, i)}
+      />
+    ));
+
   const Label = () =>
     label ? <Box className={classes.label}>{label}</Box> : null;
 
@@ -45,8 +71,11 @@ const ChipArea = ({ label, onTagAdded, tags = [] }) => {
       <Button
         variant="outlined"
         className={classes.root}
+        classes={{ label: classes.btnLabel }}
         onClick={() => setOpen(true)}
-      ></Button>
+      >
+        <Chips />
+      </Button>
       <Dialog open={open} onClose={onClose} classes={{ paper: classes.dialog }}>
         <TextField
           value={tag}
