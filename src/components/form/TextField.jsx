@@ -76,8 +76,6 @@ const TextField = (props) => {
       <Box className={classes.errorLabel}>{props.errorLabel}</Box>
     ) : null;
 
-  console.log(inputProps);
-
   return (
     <Fragment>
       <Label />

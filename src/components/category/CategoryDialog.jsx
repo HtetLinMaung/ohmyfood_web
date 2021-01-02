@@ -78,7 +78,10 @@ const CategoryDialog = () => {
   };
 
   const onSelectChange = (e) => {
-    categoryDispatch({ type: "TYPES", payload: e.target.value });
+    categoryDispatch({
+      type: "TYPES",
+      payload: e.target.value.map((v) => v.key),
+    });
   };
 
   return (
@@ -146,7 +149,7 @@ const CategoryDialog = () => {
         </Grid>
 
         <Grid container spacing={1}>
-          <Grid item lg={5}>
+          <Grid item lg={12}>
             <MultiSelect
               items={typeList}
               value={types}

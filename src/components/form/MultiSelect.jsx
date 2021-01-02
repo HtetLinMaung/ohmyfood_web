@@ -1,12 +1,43 @@
 import React, { Fragment } from "react";
 import Select from "@material-ui/core/Select";
-import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
-import Checkbox from "@material-ui/core/Checkbox";
 import ListItemText from "@material-ui/core/ListItemText";
 import Input from "@material-ui/core/Input";
+import { makeStyles } from "@material-ui/core/styles";
+import Box from "@material-ui/core/Box";
+
+const useStyles = makeStyles(() => ({
+  select: {
+    background: "#fff",
+    "&:focus": {
+      background: "#fff!important",
+    },
+  },
+  outlined: {
+    padding: ".381rem .9rem",
+    borderRadius: 10,
+    width: "100%",
+    color: "#545F6D",
+    boxSizing: "border-box",
+    backgroundColor: "#fff",
+    transition: "all 0.3s",
+    boxShadow: "none",
+    border: "1px solid #c4c4c4",
+    borderWidth: 1,
+    fontSize: 12,
+    "&.MuiInput-underline:before, &.MuiInput-underline:after": {
+      display: "none !important",
+    },
+  },
+  label: {
+    fontSize: 13,
+    lineHeight: 2,
+  },
+}));
 
 const MultiSelect = ({ items, onChange, value = [] }) => {
+  const classes = useStyles();
+
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
   const MenuProps = {
@@ -20,20 +51,25 @@ const MultiSelect = ({ items, onChange, value = [] }) => {
 
   return (
     <Fragment>
-      <InputLabel id="demo-mutiple-checkbox-label">Category Types</InputLabel>
+      <Box id="demo-mutiple-checkbox-label" className={classes.label}>
+        Category Types
+      </Box>
       <Select
+        classes={{ select: classes.select }}
         labelId="demo-mutiple-checkbox-label"
         id="demo-mutiple-checkbox"
         multiple
-        value={value}
+        value={value.map((v) => items.find((item) => item.key === v))}
         onChange={onChange}
-        input={<Input />}
-        renderValue={(selected) => selected.join(", ")}
+        input={<Input className={classes.outlined} />}
+        renderValue={(selected) => {
+          console.log(selected);
+          return selected.map((s) => s.value).join(", ");
+        }}
         MenuProps={MenuProps}
       >
         {items.map((item) => (
-          <MenuItem key={item.key} value={item.value}>
-            <Checkbox checked={items.indexOf(item.value) > -1} />
+          <MenuItem key={item.key} value={item}>
             <ListItemText primary={item.value} />
           </MenuItem>
         ))}
