@@ -136,7 +136,7 @@ const CategoryTypeDialog = () => {
       classes={{ paper: classes.root }}
     >
       <DialogTitle style={{ textAlign: "center" }}>
-        {isUpdate ? "Update" : "New"} Category Type
+        {isUpdate ? "Edit" : "New"} Category Type
       </DialogTitle>
       <DialogContent style={{ padding: "0 3rem" }}>
         <Grid

@@ -32,6 +32,10 @@ const reducer = (state, action) => {
       return { ...state, tags: action.payload };
     case "TYPES":
       return { ...state, types: action.payload };
+    case "PRICE":
+      return { ...state, price: parseFloat(action.payload || 0) };
+    case "DISCOUNT_PERCENT":
+      return { ...state, discountPercent: parseFloat(action.payload || 0) };
     case "SET_STATE":
       return { ...state, ...action.payload };
     default:
@@ -55,6 +59,8 @@ const CategoryProvider = ({ children }) => {
     closeHour: null,
     tags: [],
     types: [],
+    price: 0,
+    discountPercent: 0,
   });
 
   return (

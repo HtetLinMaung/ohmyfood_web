@@ -87,6 +87,9 @@ const TextField = (props) => {
           [classes.outlined]: props.outlined && !props.focus,
         })}
         {...inputProps}
+        style={{
+          borderColor: props.outlined && props.errorLabel ? "red" : "#c4c4c4",
+        }}
       />
       <ErrorLabel />
     </Fragment>

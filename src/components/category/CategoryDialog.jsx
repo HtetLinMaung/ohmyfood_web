@@ -31,10 +31,22 @@ const CategoryDialog = () => {
   const classes = useStyles();
   const [, dispatch] = useContext(AppContext);
   const [
-    { isUpdate, categoryDialog, imageSrc, openHour, closeHour, tags, types },
+    {
+      isUpdate,
+      categoryDialog,
+      imageSrc,
+      openHour,
+      closeHour,
+      tags,
+      types,
+      name,
+      price,
+      discountPercent,
+    },
     categoryDispatch,
   ] = useContext(CategoryContext);
   const [typeList, setTypeList] = useState([]);
+  const [nameErrLabel, setNameErrLabel] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -84,24 +96,58 @@ const CategoryDialog = () => {
     });
   };
 
+  const handleNameChange = (e) => {
+    setNameErrLabel("");
+    if (!e.target.value) {
+      setNameErrLabel("Category Name must not be empty!");
+    }
+    categoryDispatch({ type: "NAME", payload: e.target.value });
+  };
+
   return (
     <Dialog
       open={categoryDialog}
       onClose={onClose}
       classes={{ paper: classes.root }}
     >
-      <DialogTitle>{isUpdate ? "Update" : "New"} Category</DialogTitle>
+      <DialogTitle>{isUpdate ? "Edit" : "New"} Category</DialogTitle>
       <DialogContent>
         <Grid container>
           <Grid item lg={7}>
-            <TextField outlined label="Category Name" />
+            <TextField
+              outlined
+              label="Category Name"
+              value={name}
+              errorLabel={nameErrLabel}
+              onChange={handleNameChange}
+            />
 
             <Grid container spacing={1}>
               <Grid item lg={6}>
-                <TextField outlined label="Price" />
+                <TextField
+                  outlined
+                  label="Price"
+                  value={price}
+                  onChange={(e) =>
+                    categoryDispatch({
+                      type: "PRICE",
+                      payload: e.target.value.replace(/[a-z]/gi, ""),
+                    })
+                  }
+                />
               </Grid>
               <Grid item lg={6}>
-                <TextField outlined label="Discount Percent" />
+                <TextField
+                  outlined
+                  label="Discount Percent"
+                  value={discountPercent}
+                  onChange={(e) =>
+                    categoryDispatch({
+                      type: "DISCOUNT_PERCENT",
+                      payload: e.target.value.replace(/[a-z]/gi, ""),
+                    })
+                  }
+                />
               </Grid>
             </Grid>
           </Grid>
@@ -137,7 +183,7 @@ const CategoryDialog = () => {
         </Grid>
 
         <Grid container spacing={1}>
-          <Grid item lg={12}>
+          <Grid item lg={12} md={12}>
             <ChipArea
               label="Tags"
               tags={tags}
@@ -149,7 +195,7 @@ const CategoryDialog = () => {
         </Grid>
 
         <Grid container spacing={1}>
-          <Grid item lg={12}>
+          <Grid item lg={12} md={12}>
             <MultiSelect
               items={typeList}
               value={types}
