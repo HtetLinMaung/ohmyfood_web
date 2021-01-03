@@ -38,6 +38,8 @@ const reducer = (state, action) => {
       return { ...state, discountPercent: parseFloat(action.payload || 0) };
     case "CATEGORY_CHANGE":
       return { ...state, categoryChanged: action.payload };
+    case "CATEGORY":
+      return { ...state, categoryId: action.payload };
     case "SET_STATE":
       return { ...state, ...action.payload };
     default:
@@ -64,6 +66,7 @@ const CategoryProvider = ({ children }) => {
     price: 0,
     discountPercent: 0,
     categoryChanged: "",
+    category: null,
   });
 
   return (

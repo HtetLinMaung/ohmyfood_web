@@ -62,10 +62,7 @@ const MultiSelect = ({ items, onChange, value = [] }) => {
         value={value.map((v) => items.find((item) => item.key === v))}
         onChange={onChange}
         input={<Input className={classes.outlined} />}
-        renderValue={(selected) => {
-          console.log(selected);
-          return selected.map((s) => s.value).join(", ");
-        }}
+        renderValue={(selected) => selected.map((s) => s.value).join(", ")}
         MenuProps={MenuProps}
       >
         {items.map((item) => (

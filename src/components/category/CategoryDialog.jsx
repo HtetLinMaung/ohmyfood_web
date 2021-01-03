@@ -12,7 +12,6 @@ import ChipArea from "../custom/ChipArea";
 import MultiSelect from "../form/MultiSelect";
 import { AppContext } from "../../context/AppProvider";
 import http from "../../utils/http";
-import moment from "moment";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -46,6 +45,7 @@ const CategoryDialog = () => {
       image,
       categoryType,
       categoryTypes,
+      category,
     },
     categoryDispatch,
   ] = useContext(CategoryContext);
@@ -125,17 +125,49 @@ const CategoryDialog = () => {
             tags,
             types,
             discountPercent,
-            openHour: moment(openHour).format("h:mm a"),
-            closeHour: moment(closeHour).format("h:mm a"),
+            openHour: openHour.toISOString(),
+            closeHour: closeHour.toISOString(),
             menus: [],
           },
         });
+      } else {
+        let oldImage = category.imageUrl;
 
-        categoryDispatch({
-          type: "CATEGORY_CHANGE",
-          payload: categoryType._id,
+        if (image) {
+          formData.append("image", image);
+          formData.append("oldImage", oldImage);
+          const { imageUrl } = await http.upload(formData);
+          oldImage = imageUrl;
+        }
+
+        const query = `
+            mutation UpdateCategory($id: ID!, $name: String!, $price: Float!, $tags: [String!], $types: [String!], $imageUrl: String!, $discountPercent: Float!, $openHour: String!, $closeHour: String!, $menus: [String!]) {
+              updateCategory(id: $id, categoryInput: {name: $name, price: $price, tags: $tags, types: $types, imageUrl: $imageUrl, discountPercent: $discountPercent, openHour: $openHour, closeHour: $closeHour, menus: $menus}) {
+                  _id
+              }
+            }
+        `;
+
+        await http.post({
+          query,
+          variables: {
+            id: category._id,
+            name,
+            price,
+            tags,
+            types,
+            imageUrl: oldImage,
+            discountPercent,
+            openHour: openHour.toISOString(),
+            closeHour: closeHour.toISOString(),
+            menus: [],
+          },
         });
       }
+      categoryDispatch({
+        type: "CATEGORY_CHANGE",
+        payload: categoryType._id,
+      });
       dispatch({ type: "LOADING", payload: false });
       onClose();
     }

@@ -24,6 +24,7 @@ import GridTable from "../table/GridTable";
 import Pagination from "../table/Pagination";
 import Select from "../form/Select";
 import DeleteDialog from "../DeleteDialog";
+import moment from "moment";
 
 const buttonStyle = {
   textTransform: "capitalize",
@@ -95,9 +96,10 @@ const useStyles = makeStyles(() => ({
 const CategoryList = () => {
   const classes = useStyles();
   const [state, dispatchApp] = useContext(AppContext);
-  const [{ categoryType, categories, categoryChanged }, dispatch] = useContext(
-    CategoryContext
-  );
+  const [
+    { categoryType, categories, categoryChanged, category },
+    dispatch,
+  ] = useContext(CategoryContext);
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
@@ -147,6 +149,9 @@ const CategoryList = () => {
                     closeHour
                     imageUrl
                     tags
+                    types {
+                      _id
+                    }
                 }
             }
           }
@@ -194,28 +199,68 @@ const CategoryList = () => {
   };
 
   const handleDelete = () => {
-    dispatchApp({ type: "DELETE_DIALOG", payload: true });
+    dispatchApp({
+      type: "SET_STATE",
+      payload: {
+        deleteDialog: true,
+        deleteId: categoryType._id,
+        deleteQuery: `
+          mutation DeleteCategoryType($id: ID!, $permanent: Boolean!) {
+            deleteCategoryType(id: $id, permanent: $permanent)
+          }
+        `,
+      },
+    });
   };
 
-  const deleteCategoryType = async () => {
+  const deleteData = async () => {
     onClose();
     dispatchApp({ type: "LOADING", payload: true });
-    const query = `
-        mutation DeleteCategoryType($id: ID!, $permanent: Boolean!) {
-            deleteCategoryType(id: $id, permanent: $permanent)
-        }
-    `;
 
     await http.post({
-      query,
+      query: state.deleteQuery,
       variables: {
-        id: categoryType._id,
+        id: state.deleteId,
         permanent: false,
       },
     });
 
     dispatchApp({ type: "LOADING", payload: false });
     dispatch({ type: "TYPE_CHANGE", payload: "delete" });
+  };
+
+  const handleCategoryEdit = (item) => {
+    dispatch({
+      type: "SET_STATE",
+      payload: {
+        isUpdate: true,
+        categoryDialog: true,
+        imageSrc: item.imageUrl,
+        openHour: new Date(item.openHour),
+        closeHour: new Date(item.closeHour),
+        tags: item.tags,
+        types: item.types.map((type) => type._id),
+        name: item.name,
+        price: item.price,
+        discountPercent: item.discountPercent,
+        category: item,
+      },
+    });
+  };
+
+  const handleCategoryDelete = (item) => {
+    dispatchApp({
+      type: "SET_STATE",
+      payload: {
+        deleteDialog: true,
+        deleteId: category._id,
+        deleteQuery: `
+            mutation DeleteCategory($id: ID!, $permanent: Boolean!) {
+              deleteCategory(id: $id, permanent: $permanent)
+            }
+        `,
+      },
+    });
   };
 
   const onClose = () => {
@@ -343,22 +388,28 @@ const CategoryList = () => {
                 {item.discountPercent}
               </Grid>
               <Grid item style={{ flex: 1 }}>
-                {item.openHour}
+                {moment(item.openHour).format("h:mm a")}
               </Grid>
               <Grid item style={{ flex: 1 }}>
-                {item.closeHour}
+                {moment(item.closeHour).format("h:mm a")}
               </Grid>
               <Grid item style={{ flex: 1 }}>
                 {item.tags.join(", ")}
               </Grid>
               <Grid item container style={{ flex: 1 }} justify="space-around">
                 <Grid item>
-                  <IconButton size="small">
+                  <IconButton
+                    size="small"
+                    onClick={handleCategoryEdit.bind(this, item)}
+                  >
                     <EditOutlined className={classes.icon} />
                   </IconButton>
                 </Grid>
                 <Grid item>
-                  <IconButton size="small">
+                  <IconButton
+                    size="small"
+                    onClick={handleCategoryDelete.bind(this, item)}
+                  >
                     <DeleteOutline className={classes.icon} />
                   </IconButton>
                 </Grid>
@@ -391,7 +442,7 @@ const CategoryList = () => {
       <DeleteDialog
         open={state.deleteDialog}
         onClose={onClose}
-        handleDelete={deleteCategoryType}
+        handleDelete={deleteData}
       />
     </Box>
   );

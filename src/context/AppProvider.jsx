@@ -24,6 +24,8 @@ const reducer = (state, action) => {
       return { ...state, deleteId: action.payload };
     case "DELETE_DIALOG":
       return { ...state, deleteDialog: action.payload };
+    case "DELETE_QUERY":
+      return { ...state, deleteQuery: action.payload };
     case "SET_STATE":
       return { ...state, ...action.payload };
     default:
@@ -38,6 +40,7 @@ const AppProvider = ({ children }) => {
     token: "",
     deleteId: "",
     deleteDialog: false,
+    deleteQuery: "",
   });
 
   return (

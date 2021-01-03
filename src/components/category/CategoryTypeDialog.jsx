@@ -106,7 +106,6 @@ const CategoryTypeDialog = () => {
         categoryDispatch({
           type: "SET_STATE",
           payload: {
-            isUpdate: false,
             categoryTypeChanged: "update",
           },
         });
