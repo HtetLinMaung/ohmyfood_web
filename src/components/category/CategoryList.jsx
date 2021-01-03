@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, Fragment, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  Fragment,
+  useState,
+  useCallback,
+} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Card, Grid, Box } from "@material-ui/core";
 import { CategoryContext } from "../../context/CategoryProvider";
@@ -89,7 +95,9 @@ const useStyles = makeStyles(() => ({
 const CategoryList = () => {
   const classes = useStyles();
   const [state, dispatchApp] = useContext(AppContext);
-  const [{ categoryType, categories }, dispatch] = useContext(CategoryContext);
+  const [{ categoryType, categories, categoryChanged }, dispatch] = useContext(
+    CategoryContext
+  );
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
@@ -125,24 +133,24 @@ const CategoryList = () => {
     },
   ];
 
-  useEffect(() => {
+  const fetchCategoriesByCategoryType = useCallback(() => {
     (async () => {
       const query = `
-        query CategoryType($id: ID!) {
-          categoryType(id: $id) {
-              categories {
-                  _id
-                  name
-                  price
-                  discountPercent
-                  openHour
-                  closeHour
-                  imageUrl
-                  tags
-              }
+          query CategoryType($id: ID!) {
+            categoryType(id: $id) {
+                categories {
+                    _id
+                    name
+                    price
+                    discountPercent
+                    openHour
+                    closeHour
+                    imageUrl
+                    tags
+                }
+            }
           }
-        }
-      `;
+        `;
 
       if (categoryType) {
         dispatchApp({ type: "LOADING", payload: true });
@@ -162,6 +170,16 @@ const CategoryList = () => {
       }
     })();
   }, [dispatchApp, dispatch, categoryType, perPage]);
+
+  useEffect(() => {
+    fetchCategoriesByCategoryType();
+  }, [fetchCategoriesByCategoryType, categoryType, perPage]);
+
+  useEffect(() => {
+    if (categoryType && categoryChanged === categoryType._id) {
+      fetchCategoriesByCategoryType();
+    }
+  }, [categoryChanged, categoryType, fetchCategoriesByCategoryType]);
 
   const handleEdit = () => {
     dispatch({

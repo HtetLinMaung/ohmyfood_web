@@ -12,6 +12,7 @@ import ChipArea from "../custom/ChipArea";
 import MultiSelect from "../form/MultiSelect";
 import { AppContext } from "../../context/AppProvider";
 import http from "../../utils/http";
+import moment from "moment";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -29,7 +30,7 @@ const useStyles = makeStyles(() => ({
 
 const CategoryDialog = () => {
   const classes = useStyles();
-  const [, dispatch] = useContext(AppContext);
+  const [state, dispatch] = useContext(AppContext);
   const [
     {
       isUpdate,
@@ -42,6 +43,9 @@ const CategoryDialog = () => {
       name,
       price,
       discountPercent,
+      image,
+      categoryType,
+      categoryTypes,
     },
     categoryDispatch,
   ] = useContext(CategoryContext);
@@ -72,18 +76,70 @@ const CategoryDialog = () => {
       dispatch({ type: "LOADING", payload: false });
       setTypeList(response.data.categoryTypes.categoryTypes);
     })();
-  }, [dispatch]);
+  }, [dispatch, categoryTypes]);
 
   const onClose = () => {
     categoryDispatch({
       type: "SET_STATE",
       payload: {
         categoryDialog: false,
+        isUpdate: false,
+        imageSrc: "",
+        openHour: null,
+        closeHour: null,
+        tags: [],
+        types: [],
+        name: "",
+        price: 0,
+        discountPercent: 0,
+        image: null,
       },
     });
   };
 
-  const saveHandler = () => {};
+  const saveHandler = async () => {
+    if ((image || imageSrc) && name && !state.loading) {
+      const formData = new FormData();
+      dispatch({ type: "LOADING", payload: true });
+
+      if (!isUpdate) {
+        formData.append("image", image);
+        formData.append("oldImage", "");
+
+        const { imageUrl } = await http.upload(formData);
+
+        const query = `
+            mutation CreateCategory($name: String!, $price: Float!, $tags: [String!], $types: [String!], $imageUrl: String!, $discountPercent: Float!, $openHour: String!, $closeHour: String!, $menus: [String!]) {
+              createCategory(categoryInput: {name: $name, price: $price, tags: $tags, types: $types, imageUrl: $imageUrl, discountPercent: $discountPercent, openHour: $openHour, closeHour: $closeHour, menus: $menus}) {
+                  _id
+              }
+            }
+        `;
+
+        await http.post({
+          query,
+          variables: {
+            name,
+            imageUrl,
+            price,
+            tags,
+            types,
+            discountPercent,
+            openHour: moment(openHour).format("h:mm a"),
+            closeHour: moment(closeHour).format("h:mm a"),
+            menus: [],
+          },
+        });
+
+        categoryDispatch({
+          type: "CATEGORY_CHANGE",
+          payload: categoryType._id,
+        });
+      }
+      dispatch({ type: "LOADING", payload: false });
+      onClose();
+    }
+  };
 
   const setImage = (file) => {
     categoryDispatch({ type: "IMAGE", payload: file });
