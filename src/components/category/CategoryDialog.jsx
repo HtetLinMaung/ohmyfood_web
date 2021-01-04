@@ -98,7 +98,13 @@ const CategoryDialog = () => {
   };
 
   const saveHandler = async () => {
-    if ((image || imageSrc) && name && !state.loading) {
+    if (
+      (image || imageSrc) &&
+      name &&
+      openHour &&
+      closeHour &&
+      !state.loading
+    ) {
       const formData = new FormData();
       dispatch({ type: "LOADING", payload: true });
 
@@ -297,7 +303,7 @@ const CategoryDialog = () => {
           Cancel
         </Button>
         <Button
-          disabled={false}
+          disabled={(!image && !imageSrc) || !name || !openHour || !closeHour}
           variant="contained"
           className={classes.button}
           style={{ background: "#3696F8", color: "#fff" }}

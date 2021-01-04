@@ -171,14 +171,17 @@ const CategoryList = () => {
           type: "CATEGORIES",
           payload: categories,
         });
-        setTotalPage(Math.ceil(categories.length / perPage));
       }
     })();
-  }, [dispatchApp, dispatch, categoryType, perPage]);
+  }, [dispatchApp, dispatch, categoryType]);
+
+  useEffect(() => {
+    setTotalPage(Math.ceil(categories.length / perPage));
+  }, [perPage, categories]);
 
   useEffect(() => {
     fetchCategoriesByCategoryType();
-  }, [fetchCategoriesByCategoryType, categoryType, perPage]);
+  }, [fetchCategoriesByCategoryType, categoryType]);
 
   useEffect(() => {
     if (categoryType && categoryChanged === categoryType._id) {
@@ -226,7 +229,11 @@ const CategoryList = () => {
     });
 
     dispatchApp({ type: "LOADING", payload: false });
-    dispatch({ type: "TYPE_CHANGE", payload: "delete" });
+    if (state.deleteQuery.match(/DeleteCategory/)) {
+      dispatch({ type: "CATEGORY_CHANGE", payload: categoryType._id });
+    } else {
+      dispatch({ type: "TYPE_CHANGE", payload: "delete" });
+    }
   };
 
   const handleCategoryEdit = (item) => {
@@ -244,11 +251,13 @@ const CategoryList = () => {
         price: item.price,
         discountPercent: item.discountPercent,
         category: item,
+        categoryChanged: "",
       },
     });
   };
 
   const handleCategoryDelete = (item) => {
+    dispatch({ type: "CATEGORY_CHANGE", payload: "" });
     dispatchApp({
       type: "SET_STATE",
       payload: {
@@ -260,6 +269,46 @@ const CategoryList = () => {
             }
         `,
       },
+    });
+  };
+
+  const handleShowAll = async () => {
+    const query = `
+        query Categories($page: Int!, $perPage: Int!) {
+          categories(page: $page, perPage: $perPage) {
+              totalRows
+              page
+              perPage
+              categories {
+                _id
+                name
+                price
+                discountPercent
+                openHour
+                closeHour
+                imageUrl
+                tags
+                types {
+                  _id
+                }
+              }
+          }
+        }
+    `;
+    dispatchApp({ type: "LOADING", payload: true });
+    setPage(1);
+    setPerPage(10);
+    const response = await http.post({
+      query,
+      variables: {
+        page: 1,
+        perPage: 10,
+      },
+    });
+    dispatchApp({ type: "LOADING", payload: false });
+    dispatch({
+      type: "CATEGORIES",
+      payload: response.data.categories.categories,
     });
   };
 
@@ -316,7 +365,13 @@ const CategoryList = () => {
               variant="contained"
               className={classes.addButton}
               onClick={() =>
-                dispatch({ type: "CATEGORY_DIALOG", payload: true })
+                dispatch({
+                  type: "SET_STATE",
+                  payload: {
+                    categoryDialog: true,
+                    categoryChanged: "",
+                  },
+                })
               }
             >
               Add
@@ -354,6 +409,7 @@ const CategoryList = () => {
           </Grid>
           <Grid item>
             <Button
+              onClick={handleShowAll}
               variant="outlined"
               size="small"
               className={classes.showAllButton}
